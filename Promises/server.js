@@ -3,6 +3,7 @@ const app = express();
 
 app.get("/withoutPromises", withoutPromises);
 app.get("/withPromises", withPromises);
+app.get("/withAwait", withAwait);
 app.listen(3000,  process.env.IP, startHandler());
 
 function startHandler() {
@@ -74,4 +75,20 @@ function makeAddPromise(value, addValue) {
   });
 
   return promise;
+}
+
+async function withAwait(req, res) {
+  let value = req.query.value;
+  let result;
+
+  try {
+    result = await makeAddPromise(value, 2);
+    result = await makeAddPromise(result, 3);
+    result = await makeAddPromise(result, 5);
+  }
+  catch(e) {
+    result = e;
+  }
+
+  writeResult(res, {result: result});
 }
